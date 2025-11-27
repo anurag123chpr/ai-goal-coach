@@ -1,0 +1,41 @@
+<Project>
+  <!-- Language version and nullable reference types -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;SA1633</NoWarn>
+  </PropertyGroup>
+
+  <!-- Code analysis and style -->
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <!-- StyleCop.Analyzers for advanced style checking -->
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- StyleCop Configuration -->
+  <PropertyGroup>
+    <!-- Rules to disable (comment out to enable) -->
+    <StyleCopTreatErrorsAsWarnings>true</StyleCopTreatErrorsAsWarnings>
+    <!-- Configure file header copyright text -->
+    <FileCopyrightText>Copyright (c) All rights reserved.</FileCopyrightText>
+  </PropertyGroup>
+
+  <!-- Suppress specific StyleCop rules that conflict with .editorconfig -->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="StyleCopTreatErrorsAsWarnings" />
+    <CompilerVisibleProperty Include="FileCopyrightText" />
+  </ItemGroup>
+
+</Project>
