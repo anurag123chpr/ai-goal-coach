@@ -183,14 +183,6 @@ Use the Hugging Face Router chat-completions endpoint with instruction-based JSO
 - **Rate-limit handling**: Automatically retries on HTTP 429
 - **Transient error recovery**: Handles network blips and 5xx errors gracefully
 
-### Trade-offs
-
-| Aspect | Choice | Rationale |
-|--------|--------|-----------|
-| Robustness vs. Speed | Instruction enforcement | Fast to implement; acceptable parsing overhead |
-| Cost vs. Quality | Lower-cost models with structured prompts | Reduced costs; sufficient quality for MVP |
-| Simplicity vs. Scale | Synchronous calls with file storage | Simple reasoning; must refactor for 10k+ users |
-
 ### Future Scaling (10,000+ users)
 
 - **Async Queue**: Decouple HTTP requests from LLM calls (Redis/RabbitMQ/Service Bus)
