@@ -22,7 +22,7 @@ This repository contains a fullstack prototype that converts vague career aspira
 3. From repo root:
    ```powershell
    dotnet restore backend
-   ASPNETCORE_URLS=http://localhost:8000 dotnet run --project backend
+   $env:ASPNETCORE_URLS = "http://localhost:8000"; dotnet run --project backend
    ```
 
 ### Frontend

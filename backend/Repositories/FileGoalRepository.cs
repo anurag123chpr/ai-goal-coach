@@ -18,13 +18,14 @@ namespace AiGoalCoach.Api.Repositories
         /// <summary>
         /// Initializes a new instance of the <see cref="FileGoalRepository"/> class.
         /// </summary>
+        /// <param name="env">The host environment used to determine the application base path.</param>
         /// <param name="savePath">Optional path to the save file. If null, defaults to `data/saved_goals.json` under app base.</param>
-        public FileGoalRepository(string? savePath = null)
+        public FileGoalRepository(IHostEnvironment env, string? savePath = null)
         {
             var path = savePath;
             if (string.IsNullOrWhiteSpace(path))
             {
-                var dataDir = Path.Combine(AppContext.BaseDirectory, "data");
+                var dataDir = Path.Combine(env.ContentRootPath ?? AppContext.BaseDirectory, "data");
                 Directory.CreateDirectory(dataDir);
                 path = Path.Combine(dataDir, "saved_goals.json");
             }

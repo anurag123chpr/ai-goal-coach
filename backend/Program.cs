@@ -6,6 +6,7 @@ using AiGoalCoach.Api.Repositories;
 using AiGoalCoach.Api.Services;
 using Polly;
 using Polly.Extensions.Http;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
@@ -33,12 +34,16 @@ builder.Services.AddHttpClient<ILlmService, HuggingFaceService>(client =>
     // Default headers (Authorization is set inside the service from configuration to allow token updates if needed)
     client.DefaultRequestHeaders.UserAgent.ParseAdd("AiGoalCoach/1.0");
 })
-    .AddPolicyHandler(GetDefaultRetryPolicy());
+    .AddPolicyHandler((sp, request) => GetDefaultRetryPolicy(sp.GetRequiredService<ILogger<Program>>()));
 
 builder.Services.AddSingleton<TelemetryService>();
 
 // Repository for saved goals
-builder.Services.AddScoped<IGoalRepository, FileGoalRepository>();
+builder.Services.AddScoped<IGoalRepository>(sp =>
+{
+    var env = sp.GetRequiredService<IHostEnvironment>();
+    return new FileGoalRepository(env);
+});
 
 // MVC controllers
 builder.Services.AddControllers();
@@ -64,7 +69,7 @@ app.Run();
 /// </summary>
 public partial class Program
 {
-    private static IAsyncPolicy<HttpResponseMessage> GetDefaultRetryPolicy()
+    private static IAsyncPolicy<HttpResponseMessage> GetDefaultRetryPolicy(ILogger logger)
     {
         // Retry on transient errors (5xx, network failures) and 429 (rate limiting).
         // Uses exponential backoff with a small jitter.
@@ -76,7 +81,7 @@ public partial class Program
                 sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                 onRetry: (outcome, timespan, retryAttempt, context) =>
                 {
-                    Console.WriteLine($"Delaying for {timespan.TotalSeconds} seconds, then making retry {retryAttempt}.");
+                    logger.LogInformation("Delaying for {DelaySeconds} seconds, then making retry {Attempt}.", timespan.TotalSeconds, retryAttempt);
                 });
     }
 }
